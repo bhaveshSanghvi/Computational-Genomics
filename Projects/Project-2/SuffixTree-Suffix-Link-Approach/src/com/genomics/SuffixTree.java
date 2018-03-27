@@ -9,6 +9,9 @@ public class SuffixTree {
 	public int number_of_nodes;
 	public String s;
 	public int suffixId;
+	public int longestDepth=0;
+	public int subsStart;
+	public int subsEnd;
 
 	public SuffixTree() {
 		root = new Node();
@@ -19,14 +22,14 @@ public class SuffixTree {
 		root.setStringDepth(0);
 	}
 	
-	private String generateString(int i) {
+	/*private String generateString(int i) {
 		String newString= "";
 		while(i<s.length()) {
 			newString = newString + s.charAt(i);
 			i++;
 		}
 		return newString;
-	}
+	}*/
 	
 	public Node findPath(Node u, int i) {
 		//System.out.println(s.charAt(i));
@@ -197,7 +200,7 @@ public class SuffixTree {
 					
 					if(u == root) {
 						v = root;
-						//findPath(v, generateString(i), i);
+						findPath(v, i);
 					}
 					/**
 					 * CASE 1B: u != root
@@ -231,18 +234,18 @@ public class SuffixTree {
 						if(u.getedgeStart() == u.getEdgeEnd()) {
 							u.setSuffixLink(root);
 							v=root;
-							findPath(v, i+(u.getEdgeEnd()-u.getedgeStart()));
+							//findPath(v, i+(u.getEdgeEnd()-u.getedgeStart()));
 						} else {
 						
 							//vPrime = root;
 							
-							v = nodeHop(root,generateString(i),u.getedgeStart()+1,u.getEdgeEnd(),i);
+							v = nodeHop(root,u.getedgeStart()+1,u.getEdgeEnd(),i);
 							//System.out.println(i);
 							if(v!=null) {
 								u.setSuffixLink(v);
 							}
 						}
-						//findPath(v, generateString(i+(u.getEdgeEnd()-u.getedgeStart())), i+(u.getEdgeEnd()-u.getedgeStart()));
+						findPath(v, i+(u.getEdgeEnd()-u.getedgeStart()));
 					} else {
 						
 						/**
@@ -255,7 +258,7 @@ public class SuffixTree {
 						
 						vPrime = uPrime.getSuffixLink();
 						if(vPrime!=null) {
-							v = nodeHop(vPrime, generateString(i+vPrime.getStringDepth()), u.getedgeStart(), u.getEdgeEnd(), i+vPrime.getStringDepth());
+							v = nodeHop(vPrime, u.getedgeStart(), u.getEdgeEnd(), i+vPrime.getStringDepth());
 						}
 						
 						if(v!=null) {
@@ -269,7 +272,7 @@ public class SuffixTree {
 		}
 	}
 
-	private Node nodeHop(Node vPrime, String suffix, int betaStart, int betaEnd, int i) {
+	private Node nodeHop(Node vPrime, int betaStart, int betaEnd, int i) {
 		Node v=null;
 		
 		int beta = betaEnd - betaStart + 1;
@@ -278,7 +281,7 @@ public class SuffixTree {
 			v = vPrime;
 		} else {
 			// exhaust beta
-			Node child = vPrime.getChildren().get(suffix.charAt(0));
+			Node child = vPrime.getChildren().get(s.charAt(i));
 			c = child.getEdgeEnd()-child.getedgeStart()+1;
 			
 			if (beta == c) {
@@ -287,9 +290,13 @@ public class SuffixTree {
 			} else {
 				if(beta < c) {
 					int n = 0; int j= child.getedgeStart();
-					while(n<beta) {
+					/*while(n<beta) {
 						i++;n++;j++;   
-					}
+					}*/
+					
+					i=i+beta;
+					j=j+beta;
+					n=n+beta;
 					
 					// n = startedge
 					// m = 0
@@ -320,7 +327,7 @@ public class SuffixTree {
 						
 					} else {
 						children = new TreeMap<Character, Node>();
-						children.put(suffix.charAt(n), leaf);
+						children.put(s.charAt(n), leaf);
 						children.put(this.s.charAt(j), child);
 						v.setChildrens(children);
 					}
@@ -340,7 +347,7 @@ public class SuffixTree {
 					v.setStringDepth(v.getParent().getStringDepth()+(v.getEdgeEnd() - v.getedgeStart() + 1));
 					
 				} else { // beta > c
-					v = nodeHop(child, generateString(i+c), betaStart + c, betaEnd, i);
+					v = nodeHop(child, betaStart + c, betaEnd, i);
 				}
 			}
 		}
@@ -350,6 +357,12 @@ public class SuffixTree {
 
 	public void depthFirstSearch(Node u) {
 		if(u.getChildren()!=null) {
+			if(u.getStringDepth()>longestDepth) {
+				System.out.println("inside");
+				  longestDepth = u.getStringDepth();
+				  subsStart = u.getedgeStart(); 
+				  subsEnd = u.getEdgeEnd();
+			  }
 			for(Map.Entry<Character,Node> entry : u.getChildren().entrySet()) {
 				  depthFirstSearch(entry.getValue());
  			}
@@ -360,4 +373,5 @@ public class SuffixTree {
 				System.out.println(s.charAt(s.length()-1));
 		}
 	}
+
 }
