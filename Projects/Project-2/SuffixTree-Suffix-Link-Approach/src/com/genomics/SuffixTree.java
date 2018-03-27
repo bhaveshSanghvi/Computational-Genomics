@@ -28,15 +28,16 @@ public class SuffixTree {
 		return newString;
 	}
 	
-	public void findPath(Node u, int i) {
+	public Node findPath(Node u, int i) {
 		//System.out.println(s.charAt(i));
+		Node leaf = null;
 		if(u.getChildren()!=null && u.getChildren().containsKey(s.charAt(i))) {
 			// contains children
 			//System.out.println("children hai"+"\n");
 			
 			// match-mismatch process
-			int j=i; 	// this is suffix pointer
-						//i is string pointer
+			int j=i; // save for later use
+		
 			Node current = u.getChildren().get(s.charAt(i));
 			int start = current.getedgeStart();
 			int end = current.getEdgeEnd();
@@ -54,24 +55,24 @@ public class SuffixTree {
 					internalNode.setedgeStart(current.getedgeStart());
 					internalNode.setEdgeEnd(start-1);
 					internalNode.setNodeId(++number_of_nodes);
-					internalNode.setParent(u);			
+					internalNode.setParent(u);
 					
-					//System.out.println(internalNode.getNodeId());
-					//System.out.println(internalNode.getedgeStart()+" "+internalNode.getEdgeEnd());
-					//System.out.println();
+					/*System.out.println(internalNode.getNodeId());
+					System.out.println(internalNode.getedgeStart()+" "+internalNode.getEdgeEnd());
+					System.out.println();*/
 					
 					// create new leaf node
 					
-					Node leaf = new Node();
+					leaf = new Node();
 					leaf.setedgeStart(i);
 					leaf.setEdgeEnd(this.s.length()-1);
 					leaf.setNodeId(++number_of_nodes);
 					leaf.setParent(internalNode);
 					leaf.setSuffix_id(suffixId++);
 					
-					//System.out.println(leaf.getNodeId());
-					//System.out.println(leaf.getedgeStart()+" "+leaf.getEdgeEnd());
-					//System.out.println();
+					/*System.out.println(leaf.getNodeId());
+					System.out.println(leaf.getedgeStart()+" "+leaf.getEdgeEnd());
+					System.out.println();*/
 					
 					// changes in existing current
 					
@@ -88,9 +89,11 @@ public class SuffixTree {
 						children = new TreeMap<Character,Node>();
 						children.put(this.s.charAt(i), leaf);
 						children.put(this.s.charAt(start), current);
-						//System.out.println(children);
 						internalNode.setChildrens(children);
 					}
+					
+					internalNode.setStringDepth(internalNode.getParent().getStringDepth()+(internalNode.getEdgeEnd() - internalNode.getedgeStart() + 1));
+					leaf.setStringDepth(leaf.getParent().getStringDepth()+(leaf.getEdgeEnd() - leaf.getedgeStart() + 1));
 					break;
 				}
 			}
@@ -104,16 +107,16 @@ public class SuffixTree {
 			// create a new node and assign the whole suffix here
 			
 			//System.out.println("children nahi");
-			Node leaf= new Node();
+			leaf= new Node();
 			leaf.setedgeStart(i);
 			leaf.setEdgeEnd(this.s.length()-1);
 			leaf.setNodeId(++number_of_nodes);
 			leaf.setParent(u);
 			leaf.setSuffix_id(suffixId++);
 			
-			//System.out.println(leaf.getNodeId());
-			//System.out.println(leaf.getedgeStart()+" "+leaf.getEdgeEnd());
-			//System.out.println();
+			/*System.out.println(leaf.getNodeId());
+			System.out.println(leaf.getedgeStart()+" "+leaf.getEdgeEnd());
+			System.out.println();*/
 			
 			Map<Character,Node> children = null;
 			if(u.getChildren()!=null) {
@@ -124,8 +127,7 @@ public class SuffixTree {
 				u.setChildrens(children);
 			}
 		}
-		
-		//System.out.println(suffixId);
+		return leaf;
 	}
 
 	public void generateSuffixTree(String s, List<Character> alphabets) {
@@ -134,10 +136,12 @@ public class SuffixTree {
 		this.s= s+"$";
 		
 		// construct a tree using suffix links
-		//generateSuffixLinks(root,generateString(0), 0);
+		for(int i=0;i<this.s.length();i++) {
+			generateSuffixLinks(root, i);
+		}
 		
 		// to construct the tree
-		for(int i=0;i<this.s.length();i++) {
+		/*for(int i=0;i<this.s.length();i++) {
 			
 			// check if input symbol belongs to alphabet
 			if(alphabets.contains(this.s.charAt(i))) {
@@ -156,12 +160,12 @@ public class SuffixTree {
 				//System.out.println("wrong input");
 				break;
 			}
-		}
+		}*/
 	}
 	
-	public void generateSuffixLinks(Node leaf, String suffix, int i) {
-		//System.out.println("---------------------");
-		//System.out.println(suffix);
+	public void generateSuffixLinks(Node leaf, int i) {
+		/*System.out.println("---------------------");
+		System.out.println(s.charAt(i));*/
 		if(i<s.length()) {
 		
 			int betaStart;
@@ -170,10 +174,11 @@ public class SuffixTree {
 			int betaPrimeEnd;
 			
 			/**
-			 * CASE 1B
+			 * CASE 1
 			 */
 			if(null==leaf.getParent()) {
-				//findPath(leaf, suffix, i);
+				// root node
+				findPath(leaf, i);
 			} else {
 				
 				Node u = leaf.getParent();
@@ -199,7 +204,7 @@ public class SuffixTree {
 					 */
 					else {
 						v = u.getSuffixLink();
-						//findPath(v, generateString(i+alpha), i+alpha); // check what should be value of i, and suffix here
+						findPath(v, i+alpha); // check what should be value of i, and suffix here
 					}
 				}
 				
@@ -226,7 +231,7 @@ public class SuffixTree {
 						if(u.getedgeStart() == u.getEdgeEnd()) {
 							u.setSuffixLink(root);
 							v=root;
-						//	findPath(v, generateString(i+(u.getEdgeEnd()-u.getedgeStart())), i+(u.getEdgeEnd()-u.getedgeStart()));
+							findPath(v, i+(u.getEdgeEnd()-u.getedgeStart()));
 						} else {
 						
 							//vPrime = root;
@@ -255,7 +260,7 @@ public class SuffixTree {
 						
 						if(v!=null) {
 							u.setSuffixLink(v);
-							//findPath(v, generateString(i+v.getStringDepth()),i+v.getStringDepth());
+							findPath(v, i+v.getStringDepth());
 						}
 					}
 				}

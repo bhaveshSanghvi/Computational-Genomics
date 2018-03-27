@@ -34,27 +34,11 @@ public class TestSuffixTree {
 
 		// Pass alphabet and fasta file to suffix tree
 		SuffixTree tree = new SuffixTree();
-		//
-		//
-		/*String s = "BANANA";
-		List<Character> alphabets = new ArrayList<>();
-		alphabets.add('A');
-		alphabets.add('B');
-		alphabets.add('N');
-		alphabets.add('M');
-		alphabets.add('I');
-		alphabets.add('S');
-		alphabets.add('P');
-		alphabets.add('G');
-		alphabets.add('C');
-		alphabets.add('T');
-				
-		*/
 		tree.generateSuffixTree(s,alphabets);
-		tree.depthFirstSearch(tree.root);
-		System.out.println(tree.number_of_nodes);
-		System.out.println(tree.suffixId);
-		//System.out.println(tree.root.getChildren().keySet());
+		
+		// perform depth first search which will print the bwt index
+		//tree.depthFirstSearch(tree.root);
+		//System.out.println(tree.number_of_nodes);
 		
 	}
 }
