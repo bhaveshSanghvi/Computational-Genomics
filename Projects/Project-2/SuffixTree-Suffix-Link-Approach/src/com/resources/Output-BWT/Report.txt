@@ -1,7 +1,7 @@
 1. CPU Usage 
--	Tomato : 0.245764588 seconds
--	Human : 0.02288767 seconds
-- 	Yeast :
+-	Tomato : 0.245 seconds
+-	Human : 0.042 seconds
+- 	Yeast : 1.43 seconds
 
 2. Clock Rate
 

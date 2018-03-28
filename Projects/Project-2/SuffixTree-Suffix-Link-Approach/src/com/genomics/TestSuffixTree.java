@@ -39,17 +39,18 @@ public class TestSuffixTree {
 
 		// Pass alphabet and fasta file to suffix tree
 		SuffixTree tree = new SuffixTree();
-		
-		tree.generateSuffixTree(s,alphabets);
+		//System.out.println("start");
+		//tree.generateSuffixTree(s,alphabets);
+		//System.out.println("end");
 		//System.out.println(s.length());
-
 		// perform depth first search which will print the bwt index
-		tree.depthFirstSearch(tree.root);
+		//tree.depthFirstSearch(tree.root);
+		
 		//System.out.println(tree.number_of_nodes);
 		//System.out.println(s.length());
-		System.out.println(tree.longestDepth);
-		System.out.println(tree.subsStart);
-		System.out.println(tree.subsEnd);
+		//System.out.println(tree.longestDepth);
+		//System.out.println(tree.subsStart);
+		//System.out.println(tree.subsEnd);
 		
 		////
 		MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
@@ -62,7 +63,7 @@ public class TestSuffixTree {
 
 			// Call an expensive task, or sleep if you are monitoring a remote process
 			
-			//tree.generateSuffixTree(s,alphabets);
+			tree.generateSuffixTree(s,alphabets);
 
 			long cpuAfter = osMBean.getProcessCpuTime();
 			long nanoAfter = System.nanoTime();
@@ -73,10 +74,16 @@ public class TestSuffixTree {
 			   (nanoAfter-nanoBefore);
 			else percent = 0;
 
-			System.out.println(cpuAfter-cpuBefore);
-			System.out.println(nanoAfter-nanoBefore);
-			System.out.println("Cpu usage: "+percent+"%");
+			System.out.println("CPU TIME: "+(cpuAfter-cpuBefore));
+			//System.out.println(nanoAfter-nanoBefore);
+			//System.out.println("Cpu usage: "+percent+"%");
 			
+			tree.depthFirstSearch(tree.root);
+			tree.exactMatchingSubstring();
+			System.out.println(tree.number_of_nodes);
+			//System.out.println(tree.longestDepth);
+			//System.out.println(tree.subsStart);
+			//System.out.println(tree.subsEnd);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
