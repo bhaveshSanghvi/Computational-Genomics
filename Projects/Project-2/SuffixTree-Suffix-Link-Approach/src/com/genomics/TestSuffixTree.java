@@ -52,7 +52,7 @@ public class TestSuffixTree {
 		//System.out.println(tree.subsStart);
 		//System.out.println(tree.subsEnd);
 		
-		////
+		// to calculate the CPU usage
 		MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
 
 		OperatingSystemMXBean osMBean;
@@ -75,7 +75,7 @@ public class TestSuffixTree {
 			else percent = 0;
 
 			System.out.println("CPU TIME: "+(cpuAfter-cpuBefore));
-			//System.out.println(nanoAfter-nanoBefore);
+			System.out.println("TIME: "+(nanoAfter-nanoBefore));
 			//System.out.println("Cpu usage: "+percent+"%");
 			
 			tree.depthFirstSearch(tree.root);
